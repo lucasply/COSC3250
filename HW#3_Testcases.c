@@ -2,9 +2,9 @@
  * @file testcases.c
  * @provides testcases
  *
- * Modified by:
+ * Modified by: Lucas Wagner
  *
- * and
+ * and Jonah Harlan
  *
  */
 /* Embedded XINU, Copyright (C) 2023.  All rights reserved. */

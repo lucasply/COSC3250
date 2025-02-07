@@ -90,4 +90,5 @@ syscall kprintf(const char *format, ...)
     va_start(ap, format);
     retval = _doprnt(format, ap, (int (*)(long, long))kputc, 0);
     va_end(ap);
-    retur
+    return retval;
+}

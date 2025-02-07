@@ -1,2 +1,3 @@
 # COSC3250
-OS projects
+Repository for all of our CO-OP COSC3250 projects.
+Contributors: Lucas Wagner, Harlan Jonah

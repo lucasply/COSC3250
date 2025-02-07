@@ -27,16 +27,17 @@ void testcases(void)
         // TODO: Test your operating system!
     case 'a':
             kprintf("\r\n123\r\n");
+            break;
     case 'b':
             kprintf("\r\n---32 character test---\r\n");
 
             kprintf("\r\nabcdefghijklmnopqrstuvwxyz123456732 \r\n");
-
+            break;
     case 'c':
             if(kgetc()){
             kprintf("\r\n---kgetc() is working---\r\n");
             }
-
+            break;
     default:
         kprintf("\r\nHello Xinu World!\r\n");
     }

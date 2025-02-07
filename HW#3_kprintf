@@ -1,3 +1,10 @@
+/**
+ * COSC 3250 - Project #3
+ * Functions as a communicator between the terminal and the modem.
+ * @author Lucas Wagner, Jonah Harlan
+ * Instructor Professor Brylow
+ * TA-BOT:MAILTO l.wagner@marquette.edu, jonah.harlan@marquette.edu
+ */
 #include <xinu.h>
 
 #define UNGETMAX 10             /* Can un-get at most 10 characters. */

@@ -1,0 +1,86 @@
+#include <xinu.h>
+
+#define UNGETMAX 10             /* Can un-get at most 10 characters. */
+static unsigned char ungetArray[UNGETMAX];
+unsigned int  bufp; // Local buffer tracker
+
+syscall kgetc()
+{
+    volatile struct ns16550_uart_csreg *regptr;
+    regptr = (struct ns16550_uart_csreg *)UART_BASE;
+
+    // TODO: First, check the unget buffer for a character.
+    //       Otherwise, check UART line status register, and
+    //       once there is data ready, get character c.
+    if(bufp >0){
+            return ungetArray[--bufp]; // Return value and decrement bufp
+    }
+    // Data ready is the first bit in the LSR register
+    while(!(regptr -> lsr & 0x01)); // Wait until data is ready
+    return regptr -> buffer;
+
+}
+
+/**
+ * kcheckc - check to see if a character is available.
+ * @return true if a character is available, false otherwise.
+ */
+syscall kcheckc(void)
+{
+    volatile struct ns16550_uart_csreg *regptr;
+    regptr = (struct ns16550_uart_csreg *)UART_BASE;
+
+    // TODO: Check the unget buffer and the UART for characters.
+
+    // Checking unget buffer
+    if(bufp > 0){
+            return 1; // There's something in the ungetbuffer
+    }
+
+    return (regptr -> lsr & 0x01); // Returns 1 if there is a char ready
+}
+
+/**
+ * kungetc - put a serial character "back" into a local buffer.
+ * @param c character to unget.
+ * @return c on success, SYSERR on failure.
+ */
+syscall kungetc(unsigned char c)
+{
+
+    // TODO: Check for room in unget buffer, put the character in or discard.
+
+    // If buffer is full, discard c and pass SYSERR
+    if(bufp >= UNGETMAX){
+        return SYSERR;
+        }
+    // Else input c into ungetArray
+    ungetArray[bufp++] = c; // Overwrites previous character that was used in kgetc()
+    return c;
+}
+
+syscall kputc(uchar c)
+{
+    volatile struct ns16550_uart_csreg *regptr;
+    regptr = (struct ns16550_uart_csreg *)UART_BASE;
+
+    // TODO: Check UART line status register.
+    //       Once the Transmitter FIFO is empty, send character c.
+
+    // See page 910 of manual to find where the bit is in the
+    // line status register for the transmitter FIFO
+    while(!(regptr -> lsr & 0x40)); // Wait until the FIFO is empty
+    regptr -> buffer = c;
+
+    return c;
+}
+
+syscall kprintf(const char *format, ...)
+{
+    int retval;
+    va_list ap;
+
+    va_start(ap, format);
+    retval = _doprnt(format, ap, (int (*)(long, long))kputc, 0);
+    va_end(ap);
+    retur

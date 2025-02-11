@@ -37,10 +37,18 @@ void testcases(void)
             kprintf("\r\n---kgetc() is working---\r\n");
             }
 
+    case 'd':
+            kprintf("\r\nMulti-byte character test\r\n");
+
+            kprintf("\r\nShould be Euro symbol: €\r\n");
+
+    case 'e':
+            kprintf("\r\nkputc() test: ");
+            kputc(c);
+
     default:
         kprintf("\r\nHello Xinu World!\r\n");
     }
-
 
     kprintf("\r\n===TEST END===\r\n");
     return;

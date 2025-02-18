@@ -46,8 +46,10 @@ syscall create(void *funcaddr, ulong ssize, char *name, ulong nargs, ...)
     ppcb = &proctab[pid];
 
     // TODO: Setup PCB entry for new process.
-    ppcb = &proctab[pid]; // Makes ppcb point to this process in the PCB
-    ppcb -> state = PRREADY; // Process state is ready
+    ppcb = &proctab[pid]; // Makes ppcb point to created process in the PCB
+    ppcb -> state = PRSUSP; // Set state
+    ppcb -> stkbase = (void *)((ulong)saddr + ssize); // Set base
+    ppcb -> stklen = ssize; // Set length
     strncpy(ppcb -> name, name, (PNMLEN - 1)); // Give process name
     ppcb -> name[PNMLEN-1] = '\0'; // Input null operator just in case
 
@@ -83,7 +85,7 @@ syscall create(void *funcaddr, ulong ssize, char *name, ulong nargs, ...)
     }
     // Store rest in stack
     for(; i < nargs; i++){
-            *--saddr = va_arg(ap, ulong);
+            saddr[i-8] = va_arg(ap, ulong); // Start at saddr[0], which is the bottom set by pads for loop
     }
     va_end(ap);
     return pid;

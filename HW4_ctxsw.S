@@ -31,10 +31,18 @@ ctxsw:
 // TODO: Save process state, including at least the
 //      callee-save ("non-volatile") registers.
         //Saving process state
-        mv t0, a0 // t0 = old context
-        mv t1, a1 // t1 = new context
+        mv t0, a0 // t0 is old context
+        mv t1, a1 // t1 is new context
 
         // Saving non-volatile registers
+        sd a0,  (CTX_A0 * 8)(t0)
+        sd a1,  (CTX_A1 * 8)(t0)
+        sd a2,  (CTX_A2 * 8)(t0)
+        sd a3,  (CTX_A3 * 8)(t0)
+        sd a4,  (CTX_A4 * 8)(t0)
+        sd a5,  (CTX_A5 * 8)(t0)
+        sd a6,  (CTX_A6 * 8)(t0)
+        sd a7,  (CTX_A7 * 8)(t0)
         sd ra,  (CTX_RA * 8)(t0)
         sd sp,  (CTX_SP * 8)(t0)
         sd s0,  (CTX_S0 * 8)(t0)
@@ -55,7 +63,15 @@ ctxsw:
 //      callee-save ("non-volatile") registers.
 //      These call and restore segments must match the register data
 //      layout you choose in create().
-        ld ra, (CTX_RA*8)(t1)
+        ld a0,  (CTX_A0 * 8)(t1)
+        ld a1,  (CTX_A1 * 8)(t1)
+        ld a2,  (CTX_A2 * 8)(t1)
+        ld a3,  (CTX_A3 * 8)(t1)
+        ld a4,  (CTX_A4 * 8)(t1)
+        ld a5,  (CTX_A5 * 8)(t1)
+        ld a6,  (CTX_A6 * 8)(t1)
+        ld a7,  (CTX_A7 * 8)(t1)
+        ld ra,  (CTX_RA * 8)(t1)
         ld s0,  (CTX_S0 * 8)(t1)
         ld s1,  (CTX_S1 * 8)(t1)
         ld s2,  (CTX_S2 * 8)(t1)
@@ -81,7 +97,9 @@ ctxsw:
 //      you call ctxsw() before it is complete.  But, this line of code
 //      is not actually a part of a completed solution.
 
-        ret // Returns to the ra pointer
+        ld sp, CTX_SP*8(t1)
+        ld t0, CTX_PC*8(t1)
+        jalr zero, t0
 
 // ASSIGNMENT 5 TODO:
 // Note: the following code is for the next assignment.  DO NOT uncomment it

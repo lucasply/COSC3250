@@ -85,10 +85,19 @@ void printpcb(int pid)
     ulong i;
     // 0-7 args, 8-19 s regs, RA is 20, SP is 21, PC is 22
     for(i = 0; i<32; i++){
-           kprintf("Register: %1u       Address: 0x%08lx\r\n", i, (ulong)ppcb -> ctx[i]);
+           kprintf("Register: %1u       Contents: 0x%X \r\n", i, (ulong)ppcb -> ctx[i]);
     }
     // Print out process stack
+    kprintf("---Process stack---\n\r");
+    ulong *saddr;
+    saddr = ppcb -> ctx[CTX_SP]; // saddr is pointing to bottom of the process stack
+    i = 0;
+    while(saddr[i] != STACKMAGIC){
+            kprintf("Position in stack: %1u     Contents: 0x%X \r\n", i, saddr[i]);
+            i++;
+    }
 }
+
 
 /**
  * testcases - called after initialization completes to test things.
@@ -144,7 +153,7 @@ void testcases(void)
     case '4':
     // Three processes, one is large
         pid = create((void *)testmain, INITSTK, "First", 2, 4, NULL);
-        kprintf("---printfpcd for first---\n\r");
+        kprintf("---printpcb for first---\n\r");
         printpcb(pid);
         ready(pid, RESCHED_NO);
         pid = create((void *)testbigargs, INITSTK, "Second, big", 16,

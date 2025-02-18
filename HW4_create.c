@@ -1,11 +1,18 @@
 /**
+ * COSC 3250 - Project 4
+ * Creates processes for the OS
+ * @author [Lucas Wagner, Jonah Harlan]
+ * Instructor [Professor Brylow]
+ * TA-BOT:MAILTO [l.wagner@marquette.edu, jonah.harlan@marquette.edu]
+ */
+
+/**
  * @file create.c
  * @provides create, newpid, userret
  *
  * COSC 3250 Assignment 4
  */
 /* Embedded XINU, Copyright (C) 2008.  All rights reserved. */
-
 #include <xinu.h>
 
 static pid_typ newpid(void);

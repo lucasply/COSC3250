@@ -6,7 +6,13 @@
  *
  */
 /* Embedded XINU, Copyright (C) 2007.  All rights reserved. */
-
+/**
+ * COSC 3250 - Project 4
+ * Test cases made to test the functionality of create.c and ctxsw.S
+ * @author [Lucas Wagner, Jonah Harlan]
+ * Instructor [Professor Brylow]
+ * TA-BOT:MAILTO [l.wagner@marquette.edu, jonah.harlan@marquette.edu]
+ */
 #include <xinu.h>
 
 extern void main(int, char *);

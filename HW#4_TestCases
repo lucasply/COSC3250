@@ -104,6 +104,42 @@ void printpcb(int pid)
     }
 }
 
+void printreg(int pid) {
+    // Get PCB
+    pcb *ppcb;
+    ppcb = &proctab[pid];
+
+    kprintf("Printing registers of process: %s\r\n\r\n", ppcb -> name);
+
+    // Acounting registers
+    kprintf("Program Counter: 0x%08X\r\n", ppcb -> ctx[CTX_PC]);
+    kprintf("Stack Pointer: 0x%08X\r\n", ppcb -> ctx[CTX_SP]);
+    kprintf("Return Address: 0x%08X\r\n", ppcb -> ctx[CTX_RA]);
+
+    // S registers
+    kprintf("s0: %08X\r\n", ppcb -> ctx[CTX_S0]);
+    kprintf("s1: %08X\r\n", ppcb -> ctx[CTX_S1]);
+    kprintf("s2: %08X\r\n", ppcb -> ctx[CTX_S2]);
+    kprintf("s3: %08X\r\n", ppcb -> ctx[CTX_S3]);
+    kprintf("s4: %08X\r\n", ppcb -> ctx[CTX_S4]);
+    kprintf("s5: %08X\r\n", ppcb -> ctx[CTX_S5]);
+    kprintf("s6: %08X\r\n", ppcb -> ctx[CTX_S6]);
+    kprintf("s7: %08X\r\n", ppcb -> ctx[CTX_S7]);
+    kprintf("s8: %08X\r\n", ppcb -> ctx[CTX_S8]);
+    kprintf("s9: %08X\r\n", ppcb -> ctx[CTX_S9]);
+    kprintf("s10: %08X\r\n", ppcb -> ctx[CTX_S10]);
+    kprintf("s11: %08X\r\n", ppcb -> ctx[CTX_S11]);
+
+    // Argument registers
+    kprintf("a0: %08X\r\n", ppcb -> ctx[CTX_A0]);
+    kprintf("a1: %08X\r\n", ppcb -> ctx[CTX_A1]);
+    kprintf("a2: %08X\r\n", ppcb -> ctx[CTX_A2]);
+    kprintf("a3: %08X\r\n", ppcb -> ctx[CTX_A3]);
+    kprintf("a4: %08X\r\n", ppcb -> ctx[CTX_A4]);
+    kprintf("a5: %08X\r\n", ppcb -> ctx[CTX_A5]);
+    kprintf("a6: %08X\r\n", ppcb -> ctx[CTX_A6]);
+    kprintf("a7: %08X\r\n", ppcb -> ctx[CTX_A7]);
+}
 
 /**
  * testcases - called after initialization completes to test things.
@@ -117,6 +153,8 @@ void testcases(void)
     kprintf("2) Create three processes and run them\r\n");
     kprintf("3) Long name \r\n");
     kprintf("4) Combo of 1 and 3, and long name\r\n");
+    kprintf("5) Create a process and print its registers\r\n");
+
     kprintf("===TEST BEGIN===\r\n");
 
     // TODO: Test your operating system!
@@ -175,6 +213,13 @@ void testcases(void)
         printpcb(pid);
         ready(pid, RESCHED_YES); // Sets process to ready (PRREADY),
         break;
+
+    case '5':
+    // Print every register
+    pid = create((void *)testmain, INITSTK, "Print Regs", 9, 0, 1, 2, 3, 4, 5, 6, 7, 8);
+    printreg(pid);
+    break;
+
     default:
         break;
     }

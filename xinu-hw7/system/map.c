@@ -42,7 +42,7 @@ syscall mapAddressRange(pgtbl pagetable, ulong vaddr, ulong paddr,
     paddr = (ulong)truncpage(paddr);
     end = vaddr + length;
 
- U-Mode     // Loop over the entire range
+// U-Mode     // Loop over the entire range
     for (; vaddr < end; vaddr += PAGE_SIZE, paddr += PAGE_SIZE)
     {
         // Map the individual virtual pages into the table.

@@ -42,7 +42,7 @@ syscall mapAddressRange(pgtbl pagetable, ulong vaddr, ulong paddr,
     paddr = (ulong)truncpage(paddr);
     end = vaddr + length;
 
-// U-Mode     // Loop over the entire range
+    // Loop over the entire range
     for (; vaddr < end; vaddr += PAGE_SIZE, paddr += PAGE_SIZE)
     {
         // Map the individual virtual pages into the table.
@@ -97,6 +97,7 @@ syscall mapAddressRange(pgtbl pagetable, ulong vaddr, ulong paddr,
             pgtbl new_page = (pgtbl)pgalloc();
             if (new_page == (pgtbl)SYSERR)
             {
+		kprintf("Error allocating page at level: %d, pa: %d", level, *pte_entry);
                 return SYSERR;
             }
 
@@ -116,8 +117,8 @@ syscall mapAddressRange(pgtbl pagetable, ulong vaddr, ulong paddr,
     sfence_vma();
 
    
- //  kprintf("mapPage(pt:0x%X, v:0x%X, p:0x%0X, a:0x%03X)\r\n",
-    //          pagetable, vaddr, paddr, attr);
+//   kprintf("mapPage(pt:0x%X, v:0x%X, p:0x%0X, a:0x%03X)\r\n",
+//              pagetable, vaddr, paddr, attr);
     return OK;
 }
 

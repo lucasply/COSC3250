@@ -53,8 +53,7 @@ ulong dispatch(ulong cause, ulong val, ulong *frame, ulong *program_counter) {
 		// Increment PC address to avoid ecall loop, want next intruction of PC after the ecall
 		// set_sepc sets the value of (X) into sepc
 		ulong X = (ulong)program_counter + 4;
-		set_sepc(X);
-		return MAKE_SATP(currpid, ppcb->pagetable);  
+		set_sepc(X);  
 	
 	}
     } else{
@@ -81,7 +80,8 @@ ulong dispatch(ulong cause, ulong val, ulong *frame, ulong *program_counter) {
         		}
     		}
 	}
-    return SYSERR;
+    ppcb = &proctab[currpid];
+    return MAKE_SATP(currpid, ppcb->pagetable);
 }
 
 

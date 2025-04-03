@@ -48,13 +48,12 @@ void printPageTable(pgtbl pagetable)
 	* table.  If it is a leaf, print the page table entry and the
 	* physical address is maps to. 
 	*/
-	//kprintf("Printing page table,,, \n\r");
+	//kprintf("Printing page table... \n\r");
 	static int level = 2, i=0;
 	if (!pagetable){
 		kprintf("Invalid pagetable\n\r");
 		return;
 	}
-	int is_leaf = 0;
     	for (i = 0; i < PTE_MAX; i++)
     	{
 		pte entry  = pagetable[i];
@@ -85,13 +84,23 @@ void printPageTable(pgtbl pagetable)
 			    		
 
 void work(int a, int b){
-	kprintf("Work starting \r\n");
+	// kprintf("Work starting \r\n");
 	int x = a + b*100;
 	int i;
 	for(i=0; i<x; i++){
 		x += i;
 	}
-	kprintf("User process work has finished \n\r");
+	// kprintf("User process work has finished \n\r");
+}
+int *OutOfBounds(int *ptr){
+	*ptr = *ptr + 100000000;
+	return ptr;
+}
+void PermissionCheck(void){
+	pcb *ppcb = &proctab[currpid];
+	kprintf("Reading kernel variable, Process State: %d\r\n", ppcb->state); // Should print the pid
+	ppcb->state = 99; // Should trigger a store page fault
+	kprintf("This should not print\r\n");
 }
 /**
  * testcases - called after initialization completes to test things.
@@ -101,6 +110,9 @@ void testcases(void)
 	uchar c;
 
 	kprintf("===TEST BEGIN===\r\n");
+	kprintf("(0): Create a process and print it's page table\n\r");
+	kprintf("(1): Test user process ability to access memory, should result in an error\n\r");
+        kprintf("(2): Test whether a user process can access kernal variables or not \n\r");	
 
 	// TODO: Test your operating system!
 
@@ -111,21 +123,32 @@ void testcases(void)
 			// TODO: Write a testcase that creates a user process
 			// and prints out it's page table
 			// Making UserProc
-			uint pid = create((void *)work, INITSTK, 1, "MAIN1", 2, 1, 2);
+			uint pid = create((void *)work, INITSTK, 100, "MAIN1", 2, 1, 2);
 		        //Print the page table
-			pgtbl pagetable = createFakeTable();
-			//pgtbl pagetable = proctab[pid].pagetable; 
+			//pgtbl pagetable = createFakeTable();
+//			kprintf("Process: %d \n\r", pid);
+			pgtbl pagetable = proctab[pid].pagetable; 
 			printPageTable(pagetable);
+//			kprintf("Going into ready Q \n\r");
 			ready(pid, RESCHED_YES);
 			break;
 		case '1':
 			// TODO: Write a testcase that demonstrates a user
 			// process cannot access certain areas of memory
+
+			uint pid1 = create((void *)OutOfBounds, INITSTK, 100, "MAIN1", 1, 0);
+			kprintf("Starting test\n\r");
+			ready(pid1, RESCHED_YES);
 			break;
 		case '2':
 			// TODO: Write a testcase that demonstrates a user
 			// process can read kernel variables but cannot write
 			// to them
+							
+			uint pid2 = create((void *)PermissionCheck, INITSTK, 100, "Main1", 1, NULL);
+			kprintf("Starting test 2\n\r");
+			ready(pid2, RESCHED_YES);		
+			
 			break;
 		case '3':
 			// TODO: Extra credit! Add handling in xtrap to detect

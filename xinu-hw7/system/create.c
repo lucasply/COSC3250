@@ -54,16 +54,18 @@ syscall create(void *funcaddr, ulong ssize, uint priority, char *name, ulong nar
 
     // TODO: Setup PCB entry for new process.
     ppcb -> state = PRSUSP; // Set state
-    ppcb -> stkbase = (void *)((ulong)saddr + ssize); // Set base
-    ppcb -> stklen = ssize; // Set length
+    ppcb -> stkbase = (void *)((ulong)saddr); // Set base
+    ppcb -> stklen = PAGE_SIZE; // Set length
     ppcb -> tickets = priority; // Set priority
     strncpy(ppcb -> name, name, (PNMLEN - 1)); // Give process name
     ppcb -> name[PNMLEN-1] = '\0'; // Input null operator just in case
     ppcb -> pagetable = vm_userinit(pid, saddr);
 
     /* Initialize stack with accounting block. */
-    saddr = (ulong *)(((ulong)saddr) + PAGE_SIZE - sizeof(ulong)); // Set saddr equal to the top of the stack
-    *saddr = STACKMAGIC;
+    saddr = (ulong *)(((ulong)saddr) + PAGE_SIZE); // Set saddr equal to the top of the page
+    ulong *temp = saddr;
+    
+    *--saddr = STACKMAGIC;
     *--saddr = pid;
     *--saddr = ppcb->stklen;
     *--saddr = (ulong)ppcb->stkbase;
@@ -82,7 +84,7 @@ syscall create(void *funcaddr, ulong ssize, uint priority, char *name, ulong nar
     // TODO: Initialize process context.
     ppcb -> ctx[CTX_PC] = (ulong)funcaddr; // Sets PC to the function's address
     ppcb -> ctx[CTX_RA] = (ulong)userret;
-    ppcb -> ctx[CTX_SP] = PROCSTACKVADDR - ((ulong) ppcb->stkbase - (ulong) saddr);
+    ppcb -> ctx[CTX_SP] = (PROCSTACKVADDR - ((ulong)temp - (ulong) saddr))+PAGE_SIZE;
 
     // TODO:  Place arguments into context and/or activation record.
     //        See K&R 7.3 for example using va_start, va_arg and

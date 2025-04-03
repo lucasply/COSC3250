@@ -63,7 +63,7 @@ syscall resched(void)
     remove(currpid); // Take out of readylist	
     newproc = &proctab[currpid];
     newproc->state = PRCURR;    /* mark it currently running    */
-    kprintf("Resched(): Old Process Pid: %d\t New Process PID: %d \r\n", oldproc-proctab, newproc-proctab);
+//    kprintf("Resched(): Old Process Pid: %d\t New Process PID: %d \r\n", oldproc-proctab, newproc-proctab);
 #if PREEMPT
     preempt = QUANTUM;
 #endif

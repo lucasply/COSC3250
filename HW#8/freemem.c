@@ -47,17 +47,42 @@ syscall freemem(void *memptr, ulong nbytes)
      *      - Coalesce with next block if adjacent
      */
 
-    while(&freeMemBlock < currBlock) {
-        &prevBlock = &currBlock;
-        &currBlock = &currBlock.next;
+    // Heads up I get confused between * and & so I may have used the wrong ones
+    // Start at beginning of free list
+    memblk *currBlock = head;
+    memblk *prevBlock = NULL;
+
+    // Go through list unitl we find the block right before memptr
+    while (block > currBlock) {
+        // If we reach the end of the list something went wrong
+        if (currBlock->next == NULL) {
+                return SYSERR;
+        }
+
+        prevBlock = currBlock;
+        currBlock = currBlock->next;
     }
 
-    if((&prevBlock < memptr) && ((&prevBlock + &prevBlock.length - sizeof(ulong)) > (memptr - 4) {
+    if ((prevBlock < block) && ((prevBlock + prevBlock->length) == block)) { // Possible fence post error
         // Merge with previous block
     }
+    else {
+        // Inster memptr into free list
+        prevBlock->next = block;
+        block->next = currBlock;
+    }
 	
-    nextBlock = *memptr.next;
-    if((&next < (memptr + 4) && ((&nextBlock + &nextBlock.next - sizeof(ulong)) > *memptr) {
+    // Go through list until we find the block right after memptr
+    while (block > currBlock) {
+        // If we reach the end then stop trying
+        if (currBlock->next == NULL) {
+                return OK;
+        }
+
+        currBlock = currBlock->next;
+    }
+
+    if (currBlock == (block + block->length)) { // Possible fence post error
         // Merge with next block
     }
 
